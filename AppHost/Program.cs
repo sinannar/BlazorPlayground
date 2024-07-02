@@ -11,8 +11,8 @@ var tododatabase = sqlserver.AddDatabase("tododatabase");
 
 var apiapplication = builder.AddProject<Projects.ApiApplication>("apiapplication")
     .WaitFor(sqlserver)
-    .WithReference(sqlserver)
     .WaitFor(tododatabase)
+    .WithReference(sqlserver)
     .WithReference(tododatabase);
 
 builder.AddProject<Projects.BlazorApp>("blazorapp")
