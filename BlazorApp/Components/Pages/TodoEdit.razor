@@ -1,0 +1,54 @@
+﻿@page "/todos/edit/{id:int}"
+@using Shared
+@inject TodoApiClient todoApiClient
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<h3>TodoEdit</h3>
+<div>
+    <label>Title: </label>
+    <input @bind="Title" />
+</div>
+<div>
+    <label>Description: </label>
+    <input @bind="Description" />
+</div>
+<div>
+    <label>CreatedAt: </label>
+    <input disabled @bind="CreatedAt" />
+</div>
+<div>
+    <label>CompletedAt: </label>
+    <input disabled @bind="CompletedAt" />
+</div>
+<button class="btn btn-primary" @onclick="Save">Save</button>
+<button class="btn btn-primary" @onclick="Cancel">Cancel</button>
+
+@code {
+    [Parameter] public int id { get; set; }
+    public TodoDetailsDto todoDetails;
+    private string Title;
+    private string Description;
+    private DateTimeOffset CreatedAt;
+    private DateTimeOffset? CompletedAt;
+
+    protected override async Task OnInitializedAsync()
+    {
+        todoDetails = await todoApiClient.GetTodo(id).ConfigureAwait(false);
+        Title = todoDetails.Title;
+        Description = todoDetails.Description;
+        CreatedAt = todoDetails.CreatedAt;
+        CompletedAt = todoDetails.CompletedAt;
+    }
+
+    private async Task Save()
+    {
+        await todoApiClient.UpdateTodo(new UpdateTodoRequestDto(todoDetails.Id, Title, Description)).ConfigureAwait(false);
+        navigationManager.NavigateTo("/todos");
+    }
+
+    private void Cancel()
+    {
+        navigationManager.NavigateTo("/todos");
+    }
+}

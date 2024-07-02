@@ -1,0 +1,33 @@
+﻿@page "/todos/new"
+@using Shared
+@inject TodoApiClient todoApiClient
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<h3>Create Todo</h3>
+<div>
+    <label>Title: </label>
+    <input @bind="Title" />
+</div>
+<div>
+    <label>Description: </label>
+    <input @bind="Description" />
+</div>
+<button class="btn btn-primary" @onclick="Save">Save</button>
+<button class="btn btn-primary" @onclick="Cancel">Cancel</button>
+
+@code {
+    private string Title = "";
+    private string Description = "";
+
+    private async Task Save()
+    {
+        await todoApiClient.CreateTodo(new CreateTodoRequestDto(Title, Description)).ConfigureAwait(false);
+        navigationManager.NavigateTo("/todos");
+    }
+
+    private void Cancel()
+    {
+        navigationManager.NavigateTo("/todos");
+    }
+}

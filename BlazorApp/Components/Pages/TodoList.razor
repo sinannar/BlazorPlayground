@@ -1,0 +1,81 @@
+﻿@page "/todos"
+@using Shared
+@inject TodoApiClient todoApiClient
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<h3>Todos</h3>
+<button class="btn btn-primary" @onclick="New">Add New Todo</button>
+
+@if (todos.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Completed</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todo in todos)
+            {
+                <tr>
+                    <td>@todo.Id</td>
+                    <td>@todo.Title</td>
+                    <td>
+                        @if(todo.CompletedAt.HasValue)
+                        {
+                            <input type="checkbox" disabled checked />
+                        }
+                        else
+                        {
+                            <input type="checkbox" disabled />
+                        }
+                    </td>
+                    <td><button class="btn btn-primary" @onclick="() => Complete(todo.Id)">Complete</button></td>
+                    <td><button class="btn btn-primary" @onclick="() => Edit(todo.Id)">Edit</button></td>
+                    <td><button class="btn btn-primary" @onclick="() => Delete(todo.Id)">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TodoSummaryDto> todos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        todos = await todoApiClient.ListTodos().ConfigureAwait(false);
+    }
+
+    private void New()
+    {
+        navigationManager.NavigateTo("/todos/new");
+    }
+
+    private async Task Edit(int id)
+    {
+        navigationManager.NavigateTo($"/todos/edit/{id}");
+    }
+
+    private async Task Delete(int id)
+    {
+        await todoApiClient.DeleteTodo(id).ConfigureAwait(false);
+        todos = await todoApiClient.ListTodos().ConfigureAwait(false);
+    }
+
+    private async Task Complete(int id)
+    {
+        await todoApiClient.CompleteTodo(id).ConfigureAwait(false);
+        todos = await todoApiClient.ListTodos().ConfigureAwait(false);
+    }
+}
