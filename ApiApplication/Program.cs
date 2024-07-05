@@ -1,4 +1,5 @@
 
+using ApiApplication.Persistance;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiApplication;
@@ -25,10 +26,11 @@ public class Program
             .AddSqlServer(sqlConnectionString!);
 
         var app = builder.Build();
+
         using var scope = app.Services.CreateScope();
         var dbcontext = scope.ServiceProvider.GetService<TodoDbContext>()!;
-        dbcontext.Database.EnsureCreated();
         dbcontext.Database.Migrate();
+
         app.MapDefaultEndpoints();
         if (app.Environment.IsDevelopment())
         {

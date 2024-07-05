@@ -1,7 +1,7 @@
 ﻿using ApiApplication.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiApplication;
+namespace ApiApplication.Persistance;
 
 public class TodoDbContext : DbContext
 {

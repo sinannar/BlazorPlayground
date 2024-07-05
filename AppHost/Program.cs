@@ -17,6 +17,7 @@ var apiapplication = builder.AddProject<Projects.ApiApplication>("apiapplication
 
 builder.AddProject<Projects.BlazorApp>("blazorapp")
     .WaitFor(apiapplication)
-    .WithReference(apiapplication);
+    .WithReference(apiapplication)
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();
